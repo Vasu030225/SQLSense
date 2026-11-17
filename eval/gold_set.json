@@ -1,0 +1,22 @@
+[
+ {"q":"How many incidents are there in total?","sql":"SELECT COUNT(*) FROM incidents"},
+ {"q":"How many SLA breaches happened in the last 7 days?","sql":"SELECT COUNT(*) FROM incidents WHERE sla_breached=1 AND opened_at >= datetime('now','-7 days')"},
+ {"q":"How many P1 incidents are currently open or in progress?","sql":"SELECT COUNT(*) FROM incidents WHERE priority='P1' AND status IN ('Open','In Progress')"},
+ {"q":"Which application has the most incidents?","sql":"SELECT a.app_name FROM incidents i JOIN applications a ON a.app_id=i.app_id GROUP BY a.app_name ORDER BY COUNT(*) DESC LIMIT 1"},
+ {"q":"Count incidents by priority.","sql":"SELECT priority, COUNT(*) FROM incidents GROUP BY priority"},
+ {"q":"What is the SLA breach rate percentage for P2 incidents?","sql":"SELECT ROUND(100.0*SUM(sla_breached)/COUNT(*),2) FROM incidents WHERE priority='P2'"},
+ {"q":"Which team owns the Tokenization Service?","sql":"SELECT t.team_name FROM applications a JOIN teams t ON t.team_id=a.team_id WHERE a.app_name='Tokenization Service'"},
+ {"q":"How many SLA breaches does each team have?","sql":"SELECT t.team_name, SUM(i.sla_breached) FROM incidents i JOIN applications a ON a.app_id=i.app_id JOIN teams t ON t.team_id=a.team_id GROUP BY t.team_name"},
+ {"q":"How many times did the token_recovery job fail?","sql":"SELECT COUNT(*) FROM jobs WHERE job_name='token_recovery' AND status='FAILED'"},
+ {"q":"What is the average duration in minutes of the daily_ingest job?","sql":"SELECT ROUND(AVG(duration_min),2) FROM jobs WHERE job_name='daily_ingest'"},
+ {"q":"Which engineer is assigned the most incidents?","sql":"SELECT assigned_to FROM incidents GROUP BY assigned_to ORDER BY COUNT(*) DESC LIMIT 1"},
+ {"q":"How many incidents are assigned to Asha?","sql":"SELECT COUNT(*) FROM incidents WHERE assigned_to='Asha'"},
+ {"q":"Total records processed by all jobs?","sql":"SELECT SUM(records_processed) FROM jobs"},
+ {"q":"How many high criticality applications are there?","sql":"SELECT COUNT(*) FROM applications WHERE criticality='High'"},
+ {"q":"Which location has the Platform Ops team?","sql":"SELECT location FROM teams WHERE team_name='Platform Ops'"},
+ {"q":"How many incidents were opened in the last 30 days?","sql":"SELECT COUNT(*) FROM incidents WHERE opened_at >= datetime('now','-30 days')"},
+ {"q":"How many breached P1 incidents does the EKS Gateway have?","sql":"SELECT COUNT(*) FROM incidents i JOIN applications a ON a.app_id=i.app_id WHERE a.app_name='EKS Gateway' AND i.priority='P1' AND i.sla_breached=1"},
+ {"q":"Which job has the highest total retry count?","sql":"SELECT job_name FROM jobs GROUP BY job_name ORDER BY SUM(retry_count) DESC LIMIT 1"},
+ {"q":"How many jobs ended with PARTIAL status?","sql":"SELECT COUNT(*) FROM jobs WHERE status='PARTIAL'"},
+ {"q":"What is the resolve-within hours for P3?","sql":"SELECT resolve_within_hours FROM sla_policies WHERE priority='P3'"}
+]
